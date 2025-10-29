@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 public class ClickTracker : MonoBehaviour
@@ -21,7 +22,8 @@ public class ClickTracker : MonoBehaviour
     {
         // See how many clicks the player has, stored in the static
         // variable `Clickable.Clicks`.
-        _trackingText.text = "Clicks: " + Clickable.Clicks;
+        _trackingText.text = "Yarn: " + Clickable.Clicks;
+
     }
 
 }
