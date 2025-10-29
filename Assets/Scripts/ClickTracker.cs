@@ -9,6 +9,7 @@ public class ClickTracker : MonoBehaviour
 
     TextMeshProUGUI _trackingText;
 
+
     /// <summary>
     /// Awake is run before the Start() method, usually used for
     /// initializing values.

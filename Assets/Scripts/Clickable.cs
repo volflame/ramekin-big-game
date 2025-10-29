@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Clickable : MonoBehaviour
 {
@@ -13,6 +15,12 @@ public class Clickable : MonoBehaviour
     // See an example in `ClickTracker.cs`, which is on a UI
     // object titled `Tracker Text (TMP)`.
     public static int Clicks = 0;
+    public static int Upgrades = 0;
+    public static int UpgradeCost = 20;
+    public AudioClip upgradeAudio;
+    public AudioClip audioClip;
+    private int clickPower = 1;
+    public Button upgradeButton;
     public GameObject catFood;
     public GameObject catTree;
     public GameObject yellowBowl;
@@ -23,10 +31,14 @@ public class Clickable : MonoBehaviour
     float minY = -5f;
     float maxY = 0f;
     GameObject[] cats;
+    public GameObject popUpText;
+    public Canvas canvas;
+    AudioSource audioSource;
 
     private void Awake()
     {
         cats = GameObject.FindGameObjectsWithTag("cat");
+        audioSource = GetComponent<AudioSource>();
     }
 
     /// <summary>
@@ -35,7 +47,15 @@ public class Clickable : MonoBehaviour
     /// </summary>
     private void OnMouseDown()
     {
-        Clicks += 1;  // add one point
+        Clicks += clickPower;  // add one point
+        AudioSource.PlayClipAtPoint(audioClip, new Vector3(0, 0, -5), 1.0f);
+        Vector3 spawnPos = Input.mousePosition;
+        spawnPos += new Vector3(Random.Range(-40f, 40f), Random.Range(-10f, 10f), 0);
+
+        GameObject obj = Instantiate(popUpText, spawnPos, Quaternion.identity, canvas.transform);
+        var popup = obj.GetComponent<PopUpText>();
+        
+        popup.Play("+" + clickPower);
         transform.DOBlendableScaleBy(new Vector3(0.05f, 0.05f, 0.05f), 0.05f).OnComplete(ScaleBack);
 
         if (Clicks % 10 == 0)
@@ -76,4 +96,16 @@ public class Clickable : MonoBehaviour
         transform.DOBlendableScaleBy(new Vector3(-0.05f, -0.05f, -0.05f), 0.05f);
     }
 
+    public void Upgrade()
+    {
+        if (Clicks >= UpgradeCost)
+        {
+            Clicks -= UpgradeCost;
+            AudioSource.PlayClipAtPoint(upgradeAudio, new Vector3(0, 0, -10), 1.0f);
+            Upgrades += 1;
+            clickPower += 5 * Upgrades;
+            UpgradeCost = UpgradeCost += 10 * Upgrades;
+            upgradeButton.GetComponentInChildren<TextMeshProUGUI>().text = "Upgrade for " + UpgradeCost + " Yarn";
+        }
+    }
 }
